@@ -25,6 +25,71 @@ logger = logging.getLogger(__name__)
 User = get_user_model()
 
 
+# clients/views.py - Updated client_list_view with debugging
+
+@login_required
+def dashboard_or_clients_view(request):
+    """
+    यह function check करता है कि user कहाँ से आया है
+    /dashboard/ से आया = dashboard.html show करो
+    /clients/ से आया = clients.html show करो
+    """
+    
+    # आपका existing logic
+    user = request.user
+    today = datetime.now().date()
+    
+    print(f"DEBUG: Current user: {user.username}")
+    print(f"DEBUG: Request path: {request.path}")
+    
+    # Today's clients
+    todays_clients = Client.objects.filter(
+        assigned_to=user,
+        date_added__date=today
+    ).order_by('-date_added')
+    
+    # Transferred clients
+    transferred_clients = Client.objects.filter(
+        assigned_to=user,
+        transferred_to=user,
+        date_modified__date=today
+    ).exclude(added_by=user).order_by('-date_modified')
+    
+    # Stats
+    stats = {
+        'total_target': 'Rs.21000/ Rs.0',
+        'month_metalized': Client.objects.filter(
+            assigned_to=user,
+            project_status='metalized',
+            date_added__month=today.month,
+            date_added__year=today.year
+        ).count(),
+        'today_callback': Client.objects.filter(
+            assigned_to=user,
+            project_status='call_back',
+            date_added__date=today
+        ).count(),
+    }
+    
+    context = {
+        'stats': stats,
+        'todays_clients': todays_clients,
+        'transferred_clients': transferred_clients,
+        'user': user,
+    }
+    
+    # यहाँ magic होता है! 🪄
+    # Check करते हैं कि कौन सा template use करना है
+    if '/dashboard/' in request.path:
+        # Dashboard template use करो
+        return render(request, 'dashboard/dashboard.html', context)
+    else:
+        # Clients template use करो  
+        # सभी clients get करो (dashboard की तरह filter नहीं)
+        all_clients = Client.objects.filter(assigned_to=user).order_by('-date_added')
+        context['clients'] = all_clients
+        return render(request, 'clients/clients.html', context)
+
 @login_required
 def client_list_view(request):
     """
@@ -32,6 +97,34 @@ def client_list_view(request):
     """
     user = request.user
     today = datetime.now().date()
+    
+    print(f"DEBUG: Current user: {user.username}")
+    print(f"DEBUG: Today's date: {today}")
+    
+    # Get ALL clients for this user first (for debugging)
+    all_user_clients = Client.objects.filter(assigned_to=user)
+    print(f"DEBUG: Total clients assigned to user: {all_user_clients.count()}")
+    
+    # Get today's clients with more detailed filtering
+    todays_clients = Client.objects.filter(
+        assigned_to=user,
+        date_added__date=today
+    ).order_by('-date_added')
+    
+    print(f"DEBUG: Today's clients count: {todays_clients.count()}")
+    
+    # Debug: Print each today's client
+    for client in todays_clients:
+        print(f"DEBUG: Client - {client.customer_name}, Date: {client.date_added}, Status: {client.project_status}")
+    
+    # Get transferred clients
+    transferred_clients = Client.objects.filter(
+        assigned_to=user,
+        transferred_to=user,
+        date_modified__date=today
+    ).exclude(added_by=user).order_by('-date_modified')
+    
+    print(f"DEBUG: Transferred clients count: {transferred_clients.count()}")
     
     # Calculate dashboard statistics
     stats = {
@@ -47,30 +140,28 @@ def client_list_view(request):
             project_status='call_back',
             date_added__date=today
         ).count(),
+        'total_clients': all_user_clients.count(),
+        'todays_clients_count': todays_clients.count(),
     }
     
-    # Get today's clients
-    todays_clients = Client.objects.filter(
-        assigned_to=user,
-        date_added__date=today
-    ).order_by('-date_added')
-    
-    # Get transferred clients
-    transferred_clients = Client.objects.filter(
-        assigned_to=user,
-        transferred_to=user,
-        date_modified__date=today
-    ).exclude(added_by=user).order_by('-date_modified')
+    print(f"DEBUG: Stats: {stats}")
+    print("====================")
     
     context = {
         'stats': stats,
         'todays_clients': todays_clients,
         'transferred_clients': transferred_clients,
-        'user': user
+        'user': user,
+        'debug_info': {
+            'today': today,
+            'total_clients': all_user_clients.count(),
+            'todays_count': todays_clients.count(),
+        }
     }
     
-    return render(request, 'clients/dashboard.html', context)
-
+    print(f"DEBUG: Context keys: {context.keys()}")
+    
+    return render(request, 'dashboard/dashboard.html', context)
 
 class ClientListCreateAPIView(generics.ListCreateAPIView):
     """

@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM - Client Management</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .main-container {
+            display: flex;
+            height: 100vh;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50;
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        .sidebar-header {
+            background-color: #34495e;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .sidebar-header .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .sidebar-header .logo img {
+            width: 40px;
+            height: 40px;
+        }
+        
+        .sidebar-header .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .sidebar-section {
+            padding: 15px 0;
+        }
+        
+        .sidebar-section h6 {
+            color: #bdc3c7;
+            padding: 0 20px 10px;
+            font-size: 14px;
+            font-weight: normal;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+        }
+        
+        .sidebar-menu li {
+            border-bottom: 1px solid #34495e;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-menu a:hover {
+            background-color: #34495e;
+            color: white;
+        }
+        
+        .sidebar-menu a.active {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .sidebar-menu a i {
+            margin-right: 12px;
+            width: 16px;
+            text-align: center;
+        }
+        
+        .sidebar-menu a .arrow {
+            margin-left: auto;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            background-color: #ecf0f1;
+            position: relative;
+        }
+        
+        /* Top Header */
+        .top-header {
+            background-color: white;
+            padding: 15px 20px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .search-section {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .search-icon, .refresh-icon {
+            font-size: 18px;
+            color: #7f8c8d;
+            cursor: pointer;
+        }
+        
+        .tabs-section {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .tab-item {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 8px;
+        }
+        
+        .tab-1 { background-color: #f1c40f; }
+        .tab-2 { background-color: #3498db; }
+        .tab-3 { background-color: #2ecc71; }
+        .tab-4 { background-color: #e67e22; }
+        .tab-5 { background-color: #9b59b6; }
+        
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .notification-icon {
+            position: relative;
+            font-size: 18px;
+            color: #7f8c8d;
+            cursor: pointer;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #1abc9c;
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: #3498db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        /* Dashboard Content */
+        .dashboard-content {
+            padding: 20px;
+        }
+        
+        /* Breadcrumb */
+        .breadcrumb-section {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .breadcrumb-section .breadcrumb {
+            margin: 0;
+            background: none;
+            padding: 0;
+        }
+        
+        /* Search and Filter Section */
+        .filter-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .filter-row {
+            display: flex;
+            gap: 15px;
+            align-items: end;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .filter-group label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            display: block;
+        }
+        
+        .btn-search {
+            background-color: #17a2b8;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 6px;
+            font-weight: 500;
+            height: 42px;
+        }
+        
+        .btn-search:hover {
+            background-color: #138496;
+        }
+        
+        /* Client Management Section */
+        .client-management {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .table-header {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .table-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+        }
+        
+        .btn-add-client {
+            background-color: #17a2b8;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-add-client:hover {
+            background-color: #138496;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(23, 162, 184, 0.3);
+        }
+        
+        .table-content {
+            padding: 0;
+        }
+        
+        .custom-table {
+            width: 100%;
+            margin: 0;
+            border-collapse: collapse;
+        }
+        
+        .custom-table thead th {
+            background-color: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+            border-bottom: 2px solid #dee2e6;
+            font-size: 14px;
+        }
+        
+        .custom-table tbody td {
+            padding: 15px;
+            border-bottom: 1px solid #f1f1f1;
+            font-size: 14px;
+            vertical-align: middle;
+        }
+        
+        .custom-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            color: white;
+            display: inline-block;
+        }
+        
+        .status-metalized { background-color: #28a745; }
+        .status-call_back { background-color: #ffc107; color: #000; }
+        .status-not_interested { background-color: #dc3545; }
+        .status-already_paid { background-color: #17a2b8; }
+        .status-transferred { background-color: #6f42c1; }
+        
+        .action-btn {
+            padding: 6px 10px;
+            margin: 2px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-1px);
+        }
+        
+        .btn-view { 
+            background-color: #007bff; 
+            color: white; 
+        }
+        
+        .btn-view:hover {
+            box-shadow: 0 2px 8px rgba(0,123,255,0.3);
+        }
+        
+        .btn-call { 
+            background-color: #28a745; 
+            color: white; 
+        }
+        
+        .btn-call:hover {
+            box-shadow: 0 2px 8px rgba(40,167,69,0.3);
+        }
+        
+        .btn-edit { 
+            background-color: #ffc107; 
+            color: black; 
+        }
+        
+        .btn-edit:hover {
+            box-shadow: 0 2px 8px rgba(255,193,7,0.3);
+        }
+        
+        .btn-delete { 
+            background-color: #dc3545; 
+            color: white; 
+        }
+        
+        .btn-delete:hover {
+            box-shadow: 0 2px 8px rgba(220,53,69,0.3);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+        
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            background: #e9ecef;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+        }
+        
+        /* Pagination */
+        .pagination-section {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #dee2e6;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+        
+        .pagination-info {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        /* Side Panel */
+        .side-panel {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 60px;
+            height: 100vh;
+            background-color: #2c3e50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            z-index: 1000;
+        }
+        
+        .side-panel-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #34495e;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .side-panel-icon:hover {
+            background-color: #3498db;
+        }
+        
+        .activate-windows {
+            position: fixed;
+            bottom: 20px;
+            right: 80px;
+            background-color: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+            
+            .filter-row {
+                flex-direction: column;
+            }
+            
+            .filter-group {
+                min-width: 100%;
+            }
+            
+            .table-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch;
+            }
+            
+            .custom-table {
+                font-size: 12px;
+            }
+            
+            .custom-table th,
+            .custom-table td {
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div style="width: 40px; height: 40px; background: linear-gradient(45deg, #3498db, #e74c3c, #f39c12, #2ecc71); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                        <span style="color: white; font-weight: bold; font-size: 16px;">CRM</span>
+                    </div>
+                    <div class="logo-text">CRM</div>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <h6>My Work</h6>
+                <ul class="sidebar-menu">
+                    <li>
+                        <a href="/dashboard/">
+                            <i class="fas fa-tachometer-alt"></i>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="startCalling()">
+                            <i class="fas fa-phone"></i>
+                            Start Calling
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/clients/" class="active">
+                            <i class="fas fa-users"></i>
+                            My Clients
+                            <i class="fas fa-chevron-right arrow"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/targets/">
+                            <i class="fas fa-target"></i>
+                            My Target
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/payments/">
+                            <i class="fas fa-credit-card"></i>
+                            My Client Payment
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/team/clients/">
+                            <i class="fas fa-users"></i>
+                            Team Clients
+                            <i class="fas fa-chevron-right arrow"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/team/targets/">
+                            <i class="fas fa-bullseye"></i>
+                            Team Target
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/team/payments/">
+                            <i class="fas fa-money-bill"></i>
+                            Team Client Payment
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/projects/">
+                            <i class="fas fa-tasks"></i>
+                            Project Status
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Header -->
+            <div class="top-header">
+                <div class="search-section">
+                    <i class="fas fa-search search-icon"></i>
+                    <i class="fas fa-sync-alt refresh-icon" onclick="refreshPage()"></i>
+                </div>
+                
+                <div class="tabs-section">
+                    <a href="#" class="tab-item tab-1">1</a>
+                    <a href="#" class="tab-item tab-2">2</a>
+                    <a href="#" class="tab-item tab-3">3</a>
+                    <a href="#" class="tab-item tab-4">4</a>
+                    <a href="#" class="tab-item tab-5">5</a>
+                </div>
+                
+                <div class="user-section">
+                    <div class="notification-icon">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">0</span>
+                    </div>
+                    <div class="user-profile">
+                        <div class="user-avatar">{% if user %}{{ user.first_name.0|default:"U" }}{{ user.last_name.0|default:"" }}{% else %}MK{% endif %}</div>
+                        <span class="user-name">{% if user %}{{ user.get_full_name|default:user.username }}{% else %}Megha Kumari{% endif %}</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <!-- Breadcrumb -->
+                <div class="breadcrumb-section">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/dashboard/">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="/clients/">My Clients</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">All Clients</li>
+                        </ol>
+                    </nav>
+                </div>
+                
+                <!-- Search and Filter Section -->
+                <div class="filter-section">
+                    <form method="GET" id="filterForm">
+                        <div class="filter-row">
+                            <div class="filter-group">
+                                <label for="search">Search Clients</label>
+                                <input type="text" class="form-control" id="search" name="search" 
+                                       placeholder="Search by name, phone, business..." 
+                                       value="{{ request.GET.search }}">
+                            </div>
+                            <div class="filter-group">
+                                <label for="status">Status</label>
+                                <select class="form-select" id="status" name="status">
+                                    <option value="">All Status</option>
+                                    <option value="metalized" {% if request.GET.status == 'metalized' %}selected{% endif %}>Metalized</option>
+                                    <option value="call_back" {% if request.GET.status == 'call_back' %}selected{% endif %}>Call Back</option>
+                                    <option value="not_interested" {% if request.GET.status == 'not_interested' %}selected{% endif %}>Not Interested</option>
+                                    <option value="already_paid" {% if request.GET.status == 'already_paid' %}selected{% endif %}>Already Paid</option>
+                                    <option value="transferred" {% if request.GET.status == 'transferred' %}selected{% endif %}>Transferred</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label for="date_from">Date From</label>
+                                <input type="date" class="form-control" id="date_from" name="date_from" 
+                                       value="{{ request.GET.date_from }}">
+                            </div>
+                            <div class="filter-group">
+                                <label for="date_to">Date To</label>
+                                <input type="date" class="form-control" id="date_to" name="date_to" 
+                                       value="{{ request.GET.date_to }}">
+                            </div>
+                            <div class="filter-group">
+                                <button type="submit" class="btn btn-search">
+                                    <i class="fas fa-search me-2"></i>Search
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Client Management Table -->
+                <div class="client-management">
+                    <div class="table-header">
+                        <h5 class="table-title">
+                            My Clients 
+                            {% if clients.count %}
+                                <span class="badge bg-primary ms-2">{{ clients.count }}</span>
+                            {% endif %}
+                        </h5>
+                        <button class="btn-add-client" onclick="openAddClientModal()">
+                            <i class="fas fa-plus"></i>
+                            Add New Client
+                        </button>
+                    </div>
+                    <div class="table-content">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Customer</th>
+                                    <th>Business</th>
+                                    <th>Phone</th>
+                                    <th>Remark</th>
+                                    <th>Status</th>
+                                    <th>Details</th>
+                                    <th>Date Added</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if clients %}
+                                    {% for client in clients %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ client.customer_name }}</strong>
+                                            {% if client.business_name %}
+                                                <br><small style="color: #6c757d;">{{ client.business_name }}</small>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ client.business_name|default:"-" }}</td>
+                                        <td>
+                                            <a href="tel:{{ client.primary_phone }}" class="text-decoration-none">
+                                                {{ client.primary_phone }}
+                                            </a>
+                                            {% if client.secondary_phone %}
+                                                <br><small><a href="tel:{{ client.secondary_phone }}" class="text-muted">{{ client.secondary_phone }}</a></small>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <small>{{ client.remarks|default:"-"|truncatechars:50 }}</small>
+                                        </td>
+                                        <td>
+                                            <span class="status-badge status-{{ client.project_status }}">
+                                                {{ client.get_project_status_display }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <small>₹{{ client.total_amount|floatformat:0 }}</small>
+                                            {% if client.advance_amount %}
+                                                <br><small style="color: #28a745;">Adv: ₹{{ client.advance_amount|floatformat:0 }}</small>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <small>{{ client.date_added|date:"d M Y" }}</small>
+                                            <br><small style="color: #6c757d;">{{ client.date_added|date:"H:i" }}</small>
+                                        </td>
+                                        <td>
+                                            <button class="action-btn btn-view" onclick="viewClient({{ client.id }})" title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="action-btn btn-call" onclick="callClient('{{ client.primary_phone }}', '{{ client.customer_name }}')" title="Call Client">
+                                                <i class="fas fa-phone"></i>
+                                            </button>
+                                            <button class="action-btn btn-edit" onclick="editClient({{ client.id }})" title="Edit Client">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="action-btn btn-delete" onclick="deleteClient({{ client.id }}, '{{ client.customer_name }}')" title="Delete Client">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="8">
+                                            <div class="empty-state">
+                                                <div class="empty-icon">
+                                                    <i class="fas fa-users"></i>
+                                                </div>
+                                                <h4>No Clients Found</h4>
+                                                <p>{% if request.GET.search or request.GET.status %}No clients match your search criteria.{% else %}You haven't added any clients yet.{% endif %}</p>
+                                                <button class="btn btn-primary mt-3" onclick="openAddClientModal()">
+                                                    <i class="fas fa-plus me-2"></i>Add Your First Client
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    {% if clients.has_other_pages %}
+                    <div class="pagination-section">
+                        <div class="pagination-info">
+                            Showing {{ clients.start_index }} to {{ clients.end_index }} of {{ clients.paginator.count }} clients
+                        </div>
+                        <nav aria-label="Clients pagination">
+                            <ul class="pagination mb-0">
+                                {% if clients.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ clients.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Previous</a>
+                                    </li>
+                                {% endif %}
+                                
+                                {% for num in clients.paginator.page_range %}
+                                    {% if clients.number == num %}
+                                        <li class="page-item active">
+                                            <span class="page-link">{{ num }}</span>
+                                        </li>
+                                    {% elif num > clients.number|add:'-3' and num < clients.number|add:'3' %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                                
+                                {% if clients.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ clients.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Next</a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Side Panel -->
+    <div class="side-panel">
+        <div class="side-panel-icon">
+            <i class="fas fa-camera"></i>
+        </div>
+        <div class="side-panel-icon">
+            <i class="fas fa-microphone"></i>
+        </div>
+        <div class="side-panel-icon">
+            <i class="fas fa-video"></i>
+        </div>
+        <div class="side-panel-icon">
+            <i class="fas fa-volume-up"></i>
+        </div>
+        <div class="side-panel-icon">
+            <i class="fas fa-cog"></i>
+        </div>
+        <div class="side-panel-icon">
+            <i class="fas fa-folder"></i>
+        </div>
+        <div class="side-panel-icon">
+            <i class="fas fa-cog"></i>
+        </div>
+    </div>
+    
+    <!-- Activate Windows Notice -->
+    <div class="activate-windows">
+        <div>Activate Windows</div>
+        <div style="font-size: 10px; opacity: 0.7;">Go to Settings to activate Windows</div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Navigation functions
+        function refreshPage() {
+            window.location.reload();
+        }
+
+        function startCalling() {
+            alert('Start Calling feature - Redirecting to calling interface...');
+            // window.location.href = '/calling/';
+        }
+
+        // Client action functions
+        function viewClient(clientId) {
+            // Open client details in modal or redirect to detail page
+            window.location.href = `/clients/${clientId}/`;
+        }
+
+        function callClient(phone, name) {
+            if (confirm(`Call ${name} at ${phone}?`)) {
+                // Implement actual calling functionality here
+                // This could integrate with VoIP services, WebRTC, or external calling APIs
+                console.log(`Initiating call to ${name} at ${phone}`);
+                alert(`Calling ${phone}... (Simulated)`);
+                
+                // Log the call activity
+                logCallActivity(phone, name);
+            }
+        }
+
+        function editClient(clientId) {
+            // Redirect to edit page or open edit modal
+            window.location.href = `/clients/${clientId}/edit/`;
+        }
+
+        function deleteClient(clientId, customerName) {
+            if (confirm(`Are you sure you want to delete ${customerName}? This action cannot be undone.`)) {
+                // Send delete request
+                fetch(`/clients/${clientId}/delete/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Client deleted successfully!');
+                        window.location.reload();
+                    } else {
+                        alert(data.message || 'Error deleting client');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Network error occurred');
+                });
+            }
+        }
+
+        function openAddClientModal() {
+            // Redirect to add client page or open modal
+            window.location.href = '/clients/add/';
+        }
+
+        function logCallActivity(phone, name) {
+            // Log call activity to backend
+            fetch('/clients/api/log-call/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    phone: phone,
+                    customer_name: name,
+                    call_time: new Date().toISOString()
+                })
+            })
+            .catch(error => console.error('Call logging error:', error));
+        }
+
+        // Utility functions
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Auto-submit form on filter change
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterForm = document.getElementById('filterForm');
+            const statusSelect = document.getElementById('status');
+            const dateFromInput = document.getElementById('date_from');
+            const dateToInput = document.getElementById('date_to');
+            
+            // Auto-submit on status change
+            statusSelect.addEventListener('change', function() {
+                filterForm.submit();
+            });
+            
+            // Auto-submit on date change
+            dateFromInput.addEventListener('change', function() {
+                filterForm.submit();
+            });
+            
+            dateToInput.addEventListener('change', function() {
+                filterForm.submit();
+            });
+            
+            // Sidebar navigation
+            const sidebarLinks = document.querySelectorAll('.sidebar-menu a');
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    if (!this.getAttribute('href') || this.getAttribute('href') === '#') {
+                        e.preventDefault();
+                    }
+                });
+            });
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl + N for new client
+            if (e.ctrlKey && e.key === 'n') {
+                e.preventDefault();
+                openAddClientModal();
+            }
+            
+            // Ctrl + F for search focus
+            if (e.ctrlKey && e.key === 'f') {
+                e.preventDefault();
+                document.getElementById('search').focus();
+            }
+            
+            // F5 for refresh
+            if (e.key === 'F5') {
+                e.preventDefault();
+                refreshPage();
+            }
+        });
+
+        // Status badge click to filter
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('status-badge')) {
+                const status = e.target.classList[1].replace('status-', '');
+                document.getElementById('status').value = status;
+                document.getElementById('filterForm').submit();
+            }
+        });
+
+        // Phone number click to call
+        document.addEventListener('click', function(e) {
+            if (e.target.tagName === 'A' && e.target.href.startsWith('tel:')) {
+                e.preventDefault();
+                const phone = e.target.href.replace('tel:', '');
+                const row = e.target.closest('tr');
+                const customerName = row.querySelector('strong').textContent;
+                callClient(phone, customerName);
+            }
+        });
+    </script>
+</body>
+</html>
